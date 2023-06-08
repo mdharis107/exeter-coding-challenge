@@ -7,6 +7,8 @@ const findWords = findWordsFile.split("\n");
 
 const dictionaryFile = fs.readFileSync("french_dictionary.csv", "utf-8");
 
+const startTime = new Date();
+
 const updatedWords = {};
 const lines = dictionaryFile.split("\n");
 for (const line of lines) {
@@ -39,10 +41,22 @@ for (const [englishWord, frequency] of Object.entries(convertedWords)) {
 }
 fs.writeFileSync("frequency.csv", frequencyFile);
 
+const endTime = new Date();
+const convertedTime = endTime - startTime;
 
-const performanceData = process.resourceUsage();
-const timeTaken = `${performanceData.userCPUTime / 1000000} seconds`;
-const memoryUsed = `${performanceData.maxRSS / 1024 / 1024} MB`;
-const performanceTxt = `Time to process: ${timeTaken}\nMemory used: ${memoryUsed}`;
+function formatTime(milliseconds) {
+  const seconds = Math.floor(milliseconds / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+
+  const formattedTime = `${minutes} minutes ${remainingSeconds} seconds`;
+  
+  return formattedTime;
+}
+
+const finalTime = formatTime(convertedTime);
+
+const memoryUsed = process.memoryUsage().heapUsed / 1024 / 1024;
+const performanceTxt = `Time to process: ${finalTime} \nMemory used: ${memoryUsed} MB`;
+
 fs.writeFileSync("performance.txt", performanceTxt);
-
